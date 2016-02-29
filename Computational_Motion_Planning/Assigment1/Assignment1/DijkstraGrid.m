@@ -20,7 +20,12 @@ function [route,numExpanded] = DijkstraGrid (input_map, start_coords, dest_coord
 % 4 - blue  - on list
 % 5 - green - start
 % 6 - yellow - destination
-
+video = false;
+if video
+  video_writer = VideoWriter('Dijkstra', 'MPEG-4');
+  open(video_writer);
+end
+h_fig = figure;
 cmap = [1 1 1; ...
         0 0 0; ...
         1 0 0; ...
@@ -71,11 +76,16 @@ while true
     % make drawMapEveryTime = true if you want to see how the 
     % nodes are expanded on the grid. 
     if (drawMapEveryTime)
-        image(1.5, 1.5, map);
+        image_ = image(1.5, 1.5, map);
         grid on;
         axis image;
+        %colormap(colorcube)
         %pause(.1)
         drawnow;
+    end
+    %getframe(axis)
+    if video
+        writeVideo(video_writer, getframe(h_fig));
     end
     
     % Find the node with the minimum distance
@@ -177,7 +187,16 @@ else
         image(1.5, 1.5, map);
         grid on;
         axis image;
+        
+        if video
+            pause(0.2);
+            writeVideo(video_writer, getframe(h_fig));
+        end
     end
+end
+
+if video
+  close(video_writer);
 end
 
 end

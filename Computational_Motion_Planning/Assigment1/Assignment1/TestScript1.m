@@ -16,7 +16,8 @@ map (14:20, 6-1) = true;
 map (17:20, 12) = true;
 map (17:20, 12-1) = true;
 
-start_coords = [6*2, 2*2];
+start_coords = [12, 4];
+start_coords = [19, 2];
 dest_coords  = [8*2, 9*2];
 
 %map
