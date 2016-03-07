@@ -25,7 +25,8 @@ cmap = [1 1 1; ...
     1 0 0; ...
     0 0 1; ...
     0 1 0; ...
-    1 1 0];
+    1 1 0;
+    0.5,0.5,0.5];
 
 colormap(cmap);
 
@@ -62,6 +63,7 @@ yd = dest_coords(2);
 % Evaluate Heuristic function, H, for each grid cell
 % Manhattan distance
 H = abs(X - xd) + abs(Y - yd);
+H = H';
 
 % Initialize cost arrays
 f = Inf(nrows,ncols);
@@ -105,14 +107,51 @@ while true
     [i, j] = ind2sub(size(f), current);
     
     % *********************************************************************
-    % ALL YOUR CODE BETWEEN THESE LINES OF STARS
-    % Visit all of the neighbors around the current node and update the
-    % entries in the map, f, g and parent arrays
-    %
+    xni = 0; xnp =0;  yni = 0; ynp = 0;
+    if( i == 1)
+        xni = 1;
+    end 
     
+    if( i == nrows)
+        xnp = - 1;
+    end 
     
+    if( j == 1)
+        yni = 1;
+    end 
     
+    if( j == ncols)
+        ynp = -1;
+    end 
     
+    for m = [i-1 + xni, i+1 + xnp]  
+        
+        if(map(m,j)== 1 || map(m,j)== 6)
+            
+            if(g(m,j)>min_f)
+            parent(m,j) = current;
+            map(m, j) = 4;
+            end
+
+            g(m,j) = min_f-8;
+            f(m,j) = g(m,j) + H(m,j);
+        end        
+    end       
+     
+     for n = [j-1 + yni, j+1+ynp]
+         
+        if(map(i,n)== 1 || map(i,n)== 6)
+            if(g(i,n)>min_f)
+            parent(i,n) = current;
+            map(i, n) = 4;
+            end
+            
+            g(i,n) = min_f-8;
+            f(i,n) = g(i,n) + H(i,n);
+        end                    
+      end
+        
+    numExpanded = numExpanded + 1;
     
     %*********************************************************************
     
