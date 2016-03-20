@@ -65,7 +65,6 @@ end
  %-of the screen while using any point below AB yields a vector pointing into the screen. 
  %So all we need to do to distinguish which side of a line a point lies on is take a cross product.
 
-%The only question remaining is: how do we know what direction the cross product should point in? 
 %Because the triangle can be oriented in any way in 3d-space, there isn't some set value we can compare with. 
 %Instead what we need is a reference point - a point that we know is on a certain side of the line. 
 %For our triangle, this is just the third point C.
