@@ -72,8 +72,8 @@ end
 %So, any point p where [B-A] cross [p-A] does not point in the same direction as [B-A] cross [C-A] isn't inside the triangle. 
 %If the cross products do point in the same direction, then we need to test p with the other lines as well. 
 %If the point was on the same side of AB as C and is also on the same side of BC as A and on the same side of CA as B, then it is in the triangle.
-function side = same_side(p1, c, a, b)  
-    cp1 = cross(b-a, p1-a);
+function side = same_side(p, c, a, b)  
+    cp1 = cross(b-a, p-a);
     cp2 = cross(b-a, c-a);
     
     if (dot(cp1, cp2) >= 0)
