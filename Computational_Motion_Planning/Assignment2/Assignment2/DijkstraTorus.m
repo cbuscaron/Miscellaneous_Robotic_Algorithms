@@ -80,10 +80,51 @@ while true
     % Visit each neighbor of the current node and update the map, distances
     % and parent tables appropriately.
    
-    %%% All of your code should be between the two lines of stars. 
+   
     % *******************************************************************
     
+    if i == nrows
+        next = 1;
+    else
+        next = i+1;
+    end
+
+    d = min_dist+1;
+    p = current;
+    update(next, j, d, p);
+
+    if i == 1
+        next = 181;
+    else
+        next = i-1;
+    end
+
+    d = min_dist+1;
+    p = current;
+    update(next, j, d, p);
+
+    if j == ncols
+        next = 1;
+    else
+        next = j+1;
+    end
+
+    d = min_dist+1;
+    p = current;
+    update(i, next, d, p);
+
+    if j == 1
+        next = 181;
+    else
+        next = j-1;
+    end
+
+    d = min_dist+1;
+    p = current;
+    update(i, next, d, p);
     
+    
+    %numExpanded = numExpanded + 1;    
     % *******************************************************************
 end
 
