@@ -2,11 +2,13 @@
 # Author: Camilo F. Buscaron
 # sudo apt-get install python-pip
 # sudo pip install pyserial
+# sudo apt-get install python-matplotlib
 
 from __future__ import print_function
 
 import serial
-import time
+import time, datetime
+import matplotlib.pyplot as plt
 import csv
 import os, sys
 
@@ -38,12 +40,14 @@ def load(filename):
                 data[k].append(float(v))
     return data
 
+
+
 def main():
     ser = serial.Serial('/dev/ttyACM0', 115200)
 
     readings = []
     try:
-        print('Started recording....')
+        print('Started recording...')
         print('ctrl-c to stop')
         while True:
             p_var = ser.readline().strip('\r\n')
@@ -57,12 +61,23 @@ def main():
             readings.append({'preassure': p_var, 'time_stamp': time_stamp})
     except KeyboardInterrupt:
         #print(readings)
-        print('Stopped recording....')
+        print('Stopped recording...')
         print('Saving...')
-
+        now = str(datetime.datetime.now().isoformat())
         data = convert(readings)
-        save('p_test.csv', data, ['preassure', 'time_stamp'])
+
+        save('data_collected_' + now + '.csv', data, ['preassure', 'time_stamp'])
         print('Saved. Closing.')
+
+        plt.plot(data['time_stamp'], data['preassure'], label='Preassure Change')
+        plt.xlabel('Time (Secs)')
+        plt.ylabel('Preassure (Psi)')
+
+        plt.title("Preassure Reaction Plot")
+
+        plt.legend()
+
+        plt.show()
         try:
             sys.exit(0)
         except SystemExit:
