@@ -69,7 +69,7 @@ void setup()
 void loop() 
 {
   
-  for (uint8_t i = 0; i < 4; i++)
+  for (uint8_t i = 0; i < 8; i++)
   {
     tcaselect(i);
     float pressure = pressure_sensors[i].readPressure();

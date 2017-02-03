@@ -40,8 +40,6 @@ def load(filename):
                 data[k].append(float(v))
     return data
 
-
-
 def main():
     ser = serial.Serial('/dev/ttyACM0', 115200)
 
