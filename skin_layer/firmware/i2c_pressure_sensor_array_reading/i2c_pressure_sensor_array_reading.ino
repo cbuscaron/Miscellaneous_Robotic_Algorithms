@@ -16,6 +16,8 @@ extern "C" {
 MPL3115A2 pressure_sensors[7];
 
 #define TCAADDR 0x70
+
+float base_line[8];
  
 void tcaselect(uint8_t i) 
 {
@@ -64,6 +66,22 @@ void setup()
       pressure_sensors[i].setOversampleRate(0); // Set Oversample to 0 for fast reaction and small variations reading
       pressure_sensors[i].enableEventFlags(); // Enable all three pressure and temp event flags
     }
+
+    // normalize base line for all sensors at start
+
+    for (uint8_t i = 0; i < 8; i++)
+    {
+      float start_pressure = 0.0;
+      
+      for (uint16_t j = 0; j < 255; j++)
+      {
+        tcaselect(i);
+        start_pressure = start_pressure + pressure_sensors[i].readPressure();  
+      }
+
+      base_line[i] = start_pressure/255;
+      Serial.print("Normalized Sensor: #"); Serial.println(i);
+    }
 }
  
 void loop() 
@@ -73,6 +91,21 @@ void loop()
   {
     tcaselect(i);
     float pressure = pressure_sensors[i].readPressure();
+
+    if (pressure > 0.0)
+    {
+      pressure = pressure - base_line[i]; 
+
+      if (pressure < 80.0)
+      {
+        pressure = 0.0;
+      }
+    }
+    else
+    {
+      pressure = -1.0;
+    }
+    
     Serial.print(pressure);
     Serial.print(" ");
   }
