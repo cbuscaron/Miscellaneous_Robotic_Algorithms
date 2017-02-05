@@ -6,6 +6,13 @@
 
 from __future__ import print_function
 
+import numpy as np
+import time
+import rospy
+import roslib;
+
+from sensor_msgs.msg import JointState
+
 import serial
 import time, datetime
 import matplotlib.pyplot as plt
@@ -41,24 +48,39 @@ def load(filename):
     return data
 
 
-
 def main():
     ser = serial.Serial('/dev/ttyACM0', 115200)
+    nody = rospy.init_node("wam_data_logger")
 
     readings = []
     try:
         print('Started recording...')
         print('ctrl-c to stop')
         while True:
-            p_var = ser.readline().strip('\r\n')
+
+            msg = rospy.wait_for_message('/wam/joint_states', JointState)
+            pos = msg.position
+            vel = msg.velocity
+
+            pos = list(pos)
+            vel = list(vel)
 
             try:
+                p_var = ser.readline().strip('\r\n')
                 p_var = float(p_var)
             except ValueError,e:
                 continue
+            except Exception, e:
+                continue
+
             time_stamp = time.time()
             #print(p_var, time_stamp)
-            readings.append({'preassure': p_var, 'time_stamp': time_stamp})
+            print('force_lbs:', p_var)
+            print('joint_positions:', pos)
+            print('joint_velocities:', vel)
+            readings.append({'time_stamp': time_stamp, 'force_lbs': p_var,
+             'wam_j1_p': pos[0], 'wam_j2_p': pos[1], 'wam_j3_p': pos[2], 'wam_j4_p': pos[3],
+             'wam_j1_v': vel[0], 'wam_j2_v': vel[1], 'wam_j3_v': vel[2], 'wam_j4_v': vel[3]})
     except KeyboardInterrupt:
         #print(readings)
         print('Stopped recording...')
@@ -66,14 +88,15 @@ def main():
         now = str(datetime.datetime.now().isoformat())
         data = convert(readings)
 
-        save('data_collected_' + now + '.csv', data, ['preassure', 'time_stamp'])
+        save('data_collected_' + now + '.csv', data, ['time_stamp', 'force_lbs', 'wam_j1_p', 'wam_j2_p', 'wam_j3_p', 'wam_j4_p',
+         'wam_j1_v', 'wam_j2_v', 'wam_j3_v', 'wam_j4_v'])
         print('Saved. Closing.')
 
-        plt.plot(data['time_stamp'], data['preassure'], label='Preassure Change')
+        plt.plot(data['time_stamp'], data['force_lbs'], label='force_lbs Change')
         plt.xlabel('Time (Secs)')
-        plt.ylabel('Preassure (Psi)')
+        plt.ylabel('Force (lbs)')
 
-        plt.title("Preassure Reaction Plot")
+        plt.title("Force Reaction Plot")
 
         plt.legend()
 
